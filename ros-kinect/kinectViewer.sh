@@ -26,8 +26,8 @@ trap control_c SIGINT
 # ============================ Everything start from here ==============================
 
 
-
-COMPOSE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../docker-compose"
+LOCATION="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+COMPOSE="$LOCATION/../docker-compose"
 SCRIPT_NAME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
 MSG_HEADER="\e[32;1m[$SCRIPT_NAME]\e[0m"
 MSG_ERROR="\e[31;1m[ERROR]\e[0m"
@@ -52,6 +52,7 @@ printf "$MSG_HEADER Start running...\n"
 xhost +
 
 # Start the nodes!
+cd $LOCATION
 if ! $COMPOSE --x-networking up -d; then
     printf "$MSG_HEADER$MSG_ERROR $SCRIPT_NAME exited on error\n"
     exit
