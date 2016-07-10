@@ -35,7 +35,7 @@ MSG_ERROR="\e[31;1m[ERROR]\e[0m"
 # Check if command "docker" is available
 if ! hash docker 2>/dev/null; then
     printf "$MSG_HEADER$MSG_ERROR docker installation is required to run this script!\n"
-    printf "[$MSG_HEADER]Visit https://docs.docker.com/engine/installation/ for installation guide"
+    printf "$MSG_HEADER Visit https://docs.docker.com/engine/installation/ for installation guide"
     exit
 fi
 
