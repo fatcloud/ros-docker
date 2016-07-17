@@ -1,170 +1,162 @@
-# ROS Tutorial Talker
-talker:
-  # build: ros-tutorials/.
-  image: toddsampson:ros-indigo-tutorials
-  container_name: talker
-  hostname: talker
-  net: rosdocker
-  environment:
+version: '2'
+
+services:
+  # ROS Tutorial Talker
+  talker:
+    # build: ros-tutorials/.
+    image: toddsampson:ros-indigo-tutorials
+    container_name: talker
+    hostname: talker
+    environment:
       - "ROS_HOSTNAME=talker"
       - "ROS_MASTER_URI=http://rosmaster:11311"
-  # command: bash
-  command: rosrun roscpp_tutorials talker
+    # command: bash
+    command: rosrun roscpp_tutorials talker
 
-# ROS Tutorial Listener
-listener:
-  # build: ros-tutorials/.
-  image: toddsampson:ros-indigo-tutorials
-  container_name: listener
-  hostname: listener
-  net: rosdocker
-  environment:
+  # ROS Tutorial Listener
+  listener:
+    # build: ros-tutorials/.
+    image: toddsampson:ros-indigo-tutorials
+    container_name: listener
+    hostname: listener
+    environment:
       - "ROS_HOSTNAME=listener"
       - "ROS_MASTER_URI=http://rosmaster:11311"
-  # command: bash
-  command: rosrun roscpp_tutorials listener
+    # command: bash
+    command: rosrun roscpp_tutorials listener
 
-# ROS Structure Sensor
-structure_sensor:
-  # build: ros-structure_sensor/.
-  image: toddsampson/ros-indigo-structure_sensor
-  container_name: structure_sensor
-  hostname: structure_sensor
-  volumes_from:
+  # ROS Structure Sensor
+  structure_sensor:
+    # build: ros-structure_sensor/.
+    image: toddsampson/ros-indigo-structure_sensor
+    container_name: structure_sensor
+    hostname: structure_sensor
+    volumes_from:
       - "rosmaster"
-  net: rosdocker
-  devices:
+    devices:
       - "/dev/bus/usb:/dev/bus/usb"
-  volumes:
+    volumes:
       - "/tmp/.X11-unix:/tmp/.X11-unix"
-  environment:
+    environment:
       - "DISPLAY=$DISPLAY"
       - "ROS_HOSTNAME=structure_sensor"
       - "ROS_MASTER_URI=http://rosmaster:11311"
-  # command: bash
-  command: roslaunch openni2_launch openni2.launch rgb_processing:=False depth_registration:=True
+    # command: bash
+    command: roslaunch openni2_launch openni2.launch rgb_processing:=False depth_registration:=True
 
-# ROS USBCAM
-usbcam:
-  # build: ros-usbcam/.
-  image: toddsampson/ros-indigo-usbcam
-  container_name: usbcam
-  hostname: usbcam
-  net: rosdocker
-  devices:
+  # ROS USBCAM
+  usbcam:
+    # build: ros-usbcam/.
+    image: toddsampson/ros-indigo-usbcam
+    container_name: usbcam
+    hostname: usbcam
+    devices:
       - "/dev/bus/usb:/dev/bus/usb"
-  environment:
+    environment:
       - "ROS_HOSTNAME=usbcam"
       - "ROS_MASTER_URI=http://rosmaster:11311"
-  command: rosrun libuvc_camera camera_node _height:=480 _width:=640 _vendor:=2084 _video_mode:=uncompressed _frame_rate:=30
+    command: rosrun libuvc_camera camera_node _height:=480 _width:=640 _vendor:=2084 _video_mode:=uncompressed _frame_rate:=30
 
-# ROS Leap Motion
-leap_motion:
-  # build: ros-leap_motion/.
-  image: toddsampson/ros-indigo-leap_motion
-  container_name: leap_motion
-  hostname: leap_motion
-  volumes_from:
+  # ROS Leap Motion
+  leap_motion:
+    # build: ros-leap_motion/.
+    image: toddsampson/ros-indigo-leap_motion
+    container_name: leap_motion
+    hostname: leap_motion
+    volumes_from:
       - "rosmaster"
-  net: rosdocker
-  privileged: true
-  devices:
+    privileged: true
+    devices:
       - "/dev/bus/usb:/dev/bus/usb"
-  volumes:
+    volumes:
       # - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
       - "/tmp/.X11-unix:/tmp/.X11-unix"
-  environment:
+    environment:
       - "QT_X11_NO_MITSHM=1"
       - "DISPLAY=$DISPLAY"
       - "ROS_HOSTNAME=leap_motion"
       - "ROS_MASTER_URI=http://rosmaster:11311"
-  ports:
+    ports:
       - "6437:6437"
-  command: bash
-  # command: rosrun leap_motion sender.py
+    command: bash
+    # command: rosrun leap_motion sender.py
 
-# ROS Image View
-image_view:
-  # build: ros-image_pipeline/.
-  image: toddsampson/ros-indigo-image_pipeline
-  container_name: image_view
-  hostname: image_view
-  volumes_from:
+  # ROS Image View
+  image_view:
+    # build: ros-image_pipeline/.
+    image: toddsampson/ros-indigo-image_pipeline
+    container_name: image_view
+    hostname: image_view
+    volumes_from:
       - "rosmaster"
-  net: rosdocker
-  volumes:
+    volumes:
       - "/tmp/.X11-unix:/tmp/.X11-unix"
-  environment:
+    environment:
       - "DISPLAY=$DISPLAY"
       - "ROS_HOSTNAME=image_view"
       - "ROS_MASTER_URI=http://rosmaster:11311"
-  command: rosrun image_view image_view image:=/image_raw
+    command: rosrun image_view image_view image:=/image_raw
 
-# ROS RVIZ
-rviz:
-  # build: ros-rviz/.
-  image: toddsampson/ros-indigo-rviz
-  container_name: rviz
-  hostname: rviz
-  net: rosdocker
-  volumes:
-    - "/tmp/.X11-unix:/tmp/.X11-unix"
-  environment:
+  # ROS RVIZ
+  rviz:
+    # build: ros-rviz/.
+    image: toddsampson/ros-indigo-rviz
+    container_name: rviz
+    hostname: rviz
+    volumes:
+      - "/tmp/.X11-unix:/tmp/.X11-unix"
+    environment:
       - "DISPLAY=$DISPLAY"
       - "ROS_HOSTNAME=rviz"
       - "ROS_MASTER_URI=http://rosmaster:11311"
-  command: rosrun rviz rviz
+    command: rosrun rviz rviz
 
-# ROS Actionlib
-actionlib:
-  build: ros-actionlib/.
-  # image: toddsampson:ros-indigo-actionlib
-  container_name: actionlib
-  hostname: actionlib
-  net: rosdocker
-  environment:
+  # ROS Actionlib
+  actionlib:
+    build: ros-actionlib/.
+    # image: toddsampson:ros-indigo-actionlib
+    container_name: actionlib
+    hostname: actionlib
+    environment:
       - "ROS_HOSTNAME=actionlib"
       - "ROS_MASTER_URI=http://rosmaster:11311"
-  command: bash
+    command: bash
 
-# ROS Kinect
-kinect:
-  # build: ros-kinect/.
-  image: toddsampson:ros-indigo-kinect
-  container_name: kinect
-  hostname: kinect
-  net: rosdocker
-  devices:
+  # ROS Kinect
+  kinect:
+    # build: ros-kinect/.
+    image: toddsampson:ros-indigo-kinect
+    container_name: kinect
+    hostname: kinect
+    devices:
       - "/dev/bus/usb:/dev/bus/usb"
-  environment:
+    environment:
       - "ROS_HOSTNAME=kinect"
       - "ROS_MASTER_URI=http://rosmaster:11311"
-  # command: bash
-  command: roslaunch freenect_launch freenect.launch depth_registration:=true
+    # command: bash
+    command: roslaunch freenect_launch freenect.launch depth_registration:=true
 
 
-# ROS Kinect2
-kinect2:
-  build: ros-kinect2/.
-  # image: toddsampson:ros-indigo-kinect2
-  container_name: kinect2
-  hostname: kinect2
-  net: rosdocker
-  devices:
+  # ROS Kinect2
+  kinect2:
+    build: ros-kinect2/.
+    # image: toddsampson:ros-indigo-kinect2
+    container_name: kinect2
+    hostname: kinect2
+    devices:
       - "/dev/bus/usb:/dev/bus/usb"
-  environment:
+    environment:
       - "ROS_HOSTNAME=kinect2"
       - "ROS_MASTER_URI=http://rosmaster:11311"
-  # command: bash
-  command: roslaunch kinect2_bridge kinect2_bridge.launch
+    # command: bash
+    command: roslaunch kinect2_bridge kinect2_bridge.launch
 
 
-# ROS MASTER (ROSCORE)
-rosmaster:
-  image: ros:latest
-  container_name: rosmaster
-  hostname: rosmaster
-  net: rosdocker
-  ports:
+  # ROS MASTER (ROSCORE)
+  rosmaster:
+    image: ros:latest
+    container_name: rosmaster
+    hostname: rosmaster
+    ports:
        - "11311:11311"
-  command: roscore
+    command: roscore

@@ -1,0 +1,44 @@
+version: '2'
+
+services:
+  usbcam:
+    # build: ros-usbcam/.
+    image: toddsampson/ros-indigo-usbcam
+    container_name: usbcam
+    hostname: usbcam
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+    environment:
+      - "ROS_HOSTNAME=usbcam"
+      - "ROS_MASTER_URI=http://rosmaster:11311"
+    command: rosrun libuvc_camera camera_node _height:=480 _width:=640 _vendor:=2084 _video_mode:=uncompressed _frame_rate:=30
+
+
+  # ROS Image View
+  image_view:
+    # build: ros-image_pipeline/.
+    image: toddsampson/ros-indigo-image_pipeline
+    container_name: image_view
+    hostname: image_view
+    volumes_from:
+      - "rosmaster"
+    volumes:
+      - "/tmp/.X11-unix:/tmp/.X11-unix"
+    environment:
+      - "DISPLAY=$DISPLAY"
+      - "ROS_HOSTNAME=image_view"
+      - "ROS_MASTER_URI=http://rosmaster:11311"
+    command: rosrun image_view image_view image:=/image_raw
+    
+    # command: rosrun image_view image_view image:=/image_raw
+
+
+
+  # ROS MASTER (ROSCORE)
+  rosmaster:
+    image: ros:latest
+    container_name: rosmaster
+    hostname: rosmaster
+    ports:
+       - "11311:11311"
+    command: roscore
